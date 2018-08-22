@@ -7,6 +7,6 @@
 <title>Holi bby</title>
 </head>
 <body>
-<H2>Oops im not restful]</H2>
+<H2>Oops im not restful</H2>
 </body>
 </html>
