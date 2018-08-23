@@ -18,7 +18,7 @@ public class AlbumList {
 private List<Album> alb;
 	
 	String param;
-	Connect c = new Connect();
+	Connect cn = new Connect();
 	
 	AlbumList(){
 		alb = new CopyOnWriteArrayList<Album>();
@@ -57,7 +57,7 @@ private List<Album> alb;
 		if(param!=null) {
 			whereQuery = "where title like '%"+param+"%'";
 		}
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		ResultSet res = st.executeQuery("SELECT * FROM Album " +
 				whereQuery);
@@ -73,7 +73,7 @@ private List<Album> alb;
 
 	public String add(String name, int artistId) throws Exception{
 		String id = "-1";
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		ResultSet res = st.executeQuery("SELECT max(AlbumId)+1 as id FROM Album ");
 		res.next();
@@ -85,7 +85,7 @@ private List<Album> alb;
 
 	public String update(int AlbumId,String name, int artistId) throws Exception{
 		String res = "Se actualizo: "+name;
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		String sqlU = " update Album set Title = '" + name +"', ArtistId='"+artistId+"' where AlbumId="+AlbumId;
 		st.executeUpdate(sqlU);
@@ -98,7 +98,7 @@ private List<Album> alb;
 	public int delete(int id) throws Exception {
 		int affectedRows = -1;
 		String sql = "delete from Album where AlbumId= " + id;
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		affectedRows = st.executeUpdate(sql);
 		return affectedRows;

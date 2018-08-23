@@ -18,7 +18,7 @@ public class ArtistList {
 	private List<Artist> arts;
 	
 	String param;
-	Connect c = new Connect();
+	Connect cn = new Connect();
 	
 	ArtistList(){
 		arts = new CopyOnWriteArrayList<Artist>();
@@ -57,7 +57,7 @@ public class ArtistList {
 		if(param!=null) {
 			whereQuery = "where name like '%"+param+"%'";
 		}
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		ResultSet res = st.executeQuery("SELECT * FROM Artist " +
 				whereQuery);
@@ -72,12 +72,12 @@ public class ArtistList {
 
 	public String add(String name) throws Exception{
 		String id = "-1";
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		ResultSet res = st.executeQuery("SELECT max(artistId)+1 as id FROM Artist ");
 		res.next();
 		id = res.getString(1);
-		String sql = " insert into artist (ArtistId, name) values('"+id+"','" + name +
+		String sql = " insert into artist (ArtistId, Name) values('"+id+"','" + name +
 		"')";
 		st.executeUpdate(sql);
 		return id;
@@ -90,7 +90,7 @@ public class ArtistList {
 	public int delete(int id) throws Exception {
 		int affectedRows = -1;
 		String sql = "delete from Artist where ArtistId= " + id;
-		Connection conn = c.conn();
+		Connection conn = cn.conn();
 		Statement st = conn.createStatement();
 		affectedRows = st.executeUpdate(sql);
 		return affectedRows;

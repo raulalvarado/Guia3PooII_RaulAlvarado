@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Cliente</title>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/skel.js"></script>
+
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>Album List</th>
+        </tr>
+        <tr>
+            <td>
+                Nombre de album:<input type="text" name="txtAlbumName" id="txtAlbumName" /> Artista:
+                <div class="input-field">
+                    <select id="artistas">
+
+                </select>
+                </div>
+                Id de album: <input type="text" name="idAlbum" id="txtAlbum" />
+                <input class="btn" type="button" name="btn" id="btn" value="Buscar" onclick="albumName=$('#txtAlbumName').val();javascript:getAlbum();">
+                <input class="btn" type="button" name="btnadd" id="btnadd" value="Agregar" onclick="albumId=$('#txtAlbum').val();albumName=$('#txtAlbumName').val();artistId=$('#artistas').val();javascript:addAlbum();">
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <ul id="artistList"></ul>
+            </td>
+        </tr>
+    </table>
+    <script>
+        $(document).ready(function() {
+            $('select').formSelect();
+        });
+        $('select').on('contentChanged', function() {
+            $(this).material_select();
+        });
+
+        albumName = "";
+        artistId = "";
+        albumId = "";
+        getAlbum();
+        getArtist();
+
+        function deleteAlbum(albumId) {
+            jQuery.ajax({
+                url: "http://localhost:8080/Guia3/Album/delete/" + albumId,
+                type: "DELETE",
+                success: function(response) {
+                    getAlbum();
+                },
+                error: function(jqXHR, status) {
+                    if (status == "error") {
+                        alert('You can\'t delete this album');
+                    }
+                }
+            });
+            $('#txtAlbumName').val("");
+
+            //getArtist();
+        }
+
+        function getAlbum() {
+            $.getJSON('http://localhost:8080/Guia3/Album/json/' + albumName, function(data) {
+                $('#artistList li').remove();
+                if (typeof(data.album.length) != 'undefined') var albums = data.album;
+                else var albums = data;
+                $.each(albums, function(index, album) {
+                    $('#artistList').append('<li>' + album.albumId + ' ' + album.title + ', ID de album: ' + album.artistId + '<a href="javascript:deleteAlbum(' + album.albumId + ')"> (Eliminar)</a></li>');
+                });
+            });
+        }
+
+        function getArtist() {
+            $.getJSON('http://localhost:8080/Guia3/Artist/json/', function(data) {
+                $('#artistas option').remove();
+                if (typeof(data.artist.length) != 'undefined') var artists = data.artist;
+                else var artists = data;
+                $.each(artists, function(index, artist) {
+                    $('#artistas').append('<option value=' + artist.artistId + '>' + artist.name + '</option>');
+
+                });
+                $('select').formSelect();
+            });
+
+        }
+
+        function addAlbum() {
+            console.log(albumId);
+            if (albumId != "") {
+                updateAlbum();
+            } else {
+                var albumObject = {
+                    title: albumName,
+                    artistId: artistId,
+                    dummy: 0
+                };
+                jQuery.ajax({
+                    crossDomain: true,
+                    type: "POST",
+                    url: "http://localhost:8080/Guia3/Album/create",
+                    data: albumObject,
+                    dataType: "json",
+                    success: function(data, status, jqXHR) {
+                        location.reload();
+                    },
+                    error: function(jqXHR, status) {
+                        location.reload();
+                    }
+                });
+            }
+            //getArtist()
+        }
+
+        function updateAlbum() {
+            var albumObject = {
+                albumId: albumId,
+                title: albumName,
+                artistId: artistId,
+                dummy: 0
+            };
+            jQuery.ajax({
+                crossDomain: true,
+                type: "PUT",
+                url: "http://localhost:8080/Guia3/Album/update",
+                data: albumObject,
+                dataType: "json",
+                success: function(data, status, jqXHR) {
+                    albumId = "";
+                    location.reload();
+                },
+                error: function(jqXHR, status) {
+                    3
+                    albumId = "";
+                    location.reload();
+                }
+            });
+            //getArtist();
+        }
+    </script>
+</body>
+
+</html>
